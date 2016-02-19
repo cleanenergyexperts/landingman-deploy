@@ -17,8 +17,9 @@ module Landingman
     protected
       def configure_s3_sync
         # Deployment via S3 Sync
+        bucket = app.config[:aws_bucket]
         app.activate :s3_sync do |s3_sync|
-          s3_sync.bucket                = ENV['AWS_BUCKET']                 # The AWS bucket name.
+          s3_sync.bucket                = ENV['AWS_BUCKET'] || bucket       # The AWS bucket name.
           s3_sync.region                = ENV['AWS_REGION'] || 'us-west-2'  # The AWS region for your bucket.
           s3_sync.aws_access_key_id     = ENV['AWS_ACCESS_ID']
           s3_sync.aws_secret_access_key = ENV['AWS_SECRET_KEY']
