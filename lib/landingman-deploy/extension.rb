@@ -26,7 +26,7 @@ module Landingman
           s3_sync.after_build           = false                             # Disable chaining on build
           s3_sync.prefer_gzip           = true
           s3_sync.index_document        = 'index.html'
-          s3_sync.index_document        = '404.html'
+          s3_sync.error_document        = '404.html'
         end
       rescue RuntimeError => e
         logger.debug "S3 Sync is already activated"
