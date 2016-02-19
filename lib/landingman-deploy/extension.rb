@@ -4,6 +4,8 @@ require 'middleman-core'
 module Landingman
   class DeployExtension < ::Middleman::Extension
     YEAR = 60 * 60 * 24 * 365
+    option :production_bucket, nil,  'AWS Bucket for the production site'
+    option :staging_bucket, nil,  'AWS Bucket for the staging site'
 
     def initialize(app, options_hash={}, &block)
       super
@@ -17,9 +19,8 @@ module Landingman
     protected
       def configure_s3_sync
         # Deployment via S3 Sync
-        bucket = app.config[:aws_bucket]
         app.activate :s3_sync do |s3_sync|
-          s3_sync.bucket                = ENV['AWS_BUCKET'] || bucket       # The AWS bucket name.
+          s3_sync.bucket                = ENV['AWS_BUCKET'] || default_bucket # The AWS bucket name.
           s3_sync.region                = ENV['AWS_REGION'] || 'us-west-2'  # The AWS region for your bucket.
           s3_sync.aws_access_key_id     = ENV['AWS_ACCESS_ID']
           s3_sync.aws_secret_access_key = ENV['AWS_SECRET_KEY']
@@ -31,6 +32,14 @@ module Landingman
         end
       rescue RuntimeError => e
         logger.debug "S3 Sync is already activated"
+      end
+
+      def default_bucket
+        if app.environment == :staging then
+          options.staging_bucket
+        elsif app.environment == :production then
+          options.production_bucket
+        end
       end
 
       def configure_s3_cache
