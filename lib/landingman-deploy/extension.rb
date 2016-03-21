@@ -6,6 +6,8 @@ module Landingman
     YEAR = 60 * 60 * 24 * 365
     option :production_bucket, nil,  'AWS Bucket for the production site'
     option :staging_bucket, nil,  'AWS Bucket for the staging site'
+    option :env_aws_access_id,  'AWS_ACCESS_ID',  'Environment Variable to use for the AWS Access ID'
+    option :env_aws_secret_key, 'AWS_SECRET_KEY', 'Environment Variable to use for the AWS Secret Key'
 
     def initialize(app, options_hash={}, &block)
       super
@@ -18,12 +20,15 @@ module Landingman
 
     protected
       def configure_s3_sync
+        aws_access_id = ENV[options.env_aws_access_id]
+        aws_secret_key = ENV[options.env_aws_secret_key]
+
         # Deployment via S3 Sync
         app.activate :s3_sync do |s3_sync|
           s3_sync.bucket                = ENV['AWS_BUCKET'] || default_bucket # The AWS bucket name.
           s3_sync.region                = ENV['AWS_REGION'] || 'us-west-2'  # The AWS region for your bucket.
-          s3_sync.aws_access_key_id     = ENV['AWS_ACCESS_ID']
-          s3_sync.aws_secret_access_key = ENV['AWS_SECRET_KEY']
+          s3_sync.aws_access_key_id     = aws_access_id
+          s3_sync.aws_secret_access_key = aws_secret_key
           s3_sync.delete                = false                             # We delete stray files by default.
           s3_sync.after_build           = false                             # Disable chaining on build
           s3_sync.prefer_gzip           = true
