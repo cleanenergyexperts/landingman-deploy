@@ -30,8 +30,16 @@ module Middleman
       def production
       	ARGV.shift # Remove environment name
       	ARGV.unshift('-e production')
-      	say("=== Deploying to Production ===")
-      	run("middleman s3_sync -B -e production #{ARGV.join(' ')}") || exit(1)
+        no_parallel = ARGV.delete('--no-parallel')
+        if no_parallel.nil? then
+        	say("=== Deploying to Production ===")
+        	run("middleman s3_sync -B -e production #{ARGV.join(' ')}") || exit(1)
+        else
+          say("=== Building for Production ===")
+          run("middleman build --no-parallel") || exit(1)
+          say("=== Deploying to Production ===")
+          run("middleman s3_sync -e production #{ARGV.join(' ')}") || exit(1)
+        end
       end
     end
 
