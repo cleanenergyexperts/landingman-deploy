@@ -29,7 +29,7 @@ module Landingman
           s3_sync.region                = ENV['AWS_REGION'] || 'us-west-2'  # The AWS region for your bucket.
           s3_sync.aws_access_key_id     = aws_access_id
           s3_sync.aws_secret_access_key = aws_secret_key
-          s3_sync.delete                = false                             # We delete stray files by default.
+          s3_sync.delete                = true                             # We delete stray files by default.
           s3_sync.after_build           = false                             # Disable chaining on build
           s3_sync.prefer_gzip           = true
           s3_sync.index_document        = 'index.html'
