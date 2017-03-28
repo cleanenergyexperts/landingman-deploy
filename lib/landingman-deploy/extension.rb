@@ -8,7 +8,7 @@ module Landingman
     option :staging_bucket, nil,  'AWS Bucket for the staging site'
     option :env_aws_access_id,  'AWS_ACCESS_ID',  'Environment Variable to use for the AWS Access ID'
     option :env_aws_secret_key, 'AWS_SECRET_KEY', 'Environment Variable to use for the AWS Secret Key'
-    optoin :delete, true, 'Should we delete stray files?'
+    option :should_delete, true, 'Should we delete stray files?'
 
     def initialize(app, options_hash={}, &block)
       super
@@ -30,7 +30,7 @@ module Landingman
           s3_sync.region                = ENV['AWS_REGION'] || 'us-west-2'  # The AWS region for your bucket.
           s3_sync.aws_access_key_id     = aws_access_id
           s3_sync.aws_secret_access_key = aws_secret_key
-          s3_sync.delete                = options.delete                    # We delete stray files by default.
+          s3_sync.delete                = options.should_delete             # We delete stray files by default.
           s3_sync.after_build           = false                             # Disable chaining on build
           s3_sync.prefer_gzip           = true
           s3_sync.index_document        = 'index.html'
